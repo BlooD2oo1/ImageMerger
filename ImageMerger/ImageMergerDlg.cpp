@@ -210,8 +210,8 @@ void CImageMergerDlg::OnBnClickedButtonGo()
 		{
 			r = Blend( src.r, r, src.a );
 			g = Blend( src.g, g, src.a );
-			b = Blend( src.b, r, src.a );
-			a = 1;
+			b = Blend( src.b, b, src.a );
+			a = 255;
 		}
 	};
 
@@ -278,13 +278,14 @@ void CImageMergerDlg::OnBnClickedButtonGo()
 		}
 
 		LPDIRECT3DTEXTURE9 pTexOut = nullptr;
-		D3DXCreateTexture( pDevice, dwWidth, dwHeight, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &pTexOut );
+		D3DXCreateTexture( pDevice, dwWidth, dwHeight, 1, D3DUSAGE_DYNAMIC, D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM, &pTexOut );
 		D3DLOCKED_RECT sLockedRectOut;
 		pTexOut->LockRect(0, &sLockedRectOut, NULL, 0);
+		SRGBPixel* pPixelsDst = (SRGBPixel*)sLockedRectOut.pBits;
+
 		for ( int iLayerInd = 0; iLayerInd < iLayerCount; iLayerInd++ )
 		{
 			SRGBPixel* pPixelsSrc = (SRGBPixel*)pLockedRect[iLayerInd].pBits;
-			SRGBPixel* pPixelsDst = (SRGBPixel*)sLockedRectOut.pBits;
 			for ( DWORD y = 0; y < dwHeight; y++ )
 			for ( DWORD x = 0; x < dwWidth; x++ )
 			{
@@ -311,7 +312,6 @@ void CImageMergerDlg::OnBnClickedButtonGo()
 		{	
 			piFileIndicesPrev[iLayerInd] = piFileIndices[iLayerInd];
 		}
-
 // 		{
 // 			int iOutputIndCheck = 0;
 // 			for ( int iLayerInd = 0; iLayerInd < iLayerCount; iLayerInd++ )
